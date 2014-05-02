@@ -6,9 +6,37 @@ first() {
   echo "Primeira execução. Atualizando todos os pacotes da distro"
   sudo apt-get update
   sudo apt-get --yes --force-yes upgrade
+
   echo "Por favor, configure a senha do root"
   sudo passwd root
   sudo reboot
+}
+
+git() {
+  echo "Atualizando e instalando o git"
+  sudo apt-get update
+  sudo apt-get --yes --force-yes install git meld gitk
+
+  echo "Configurando o git"
+  sudo rm -f /usr/local/bin/git-diff.sh
+  echo '#!/bin/bash' >> git-diff.sh
+  echo 'meld "$2" "$5" > /dev/null 2>&1' >> git-diff.sh
+  sudo mv git-diff.sh /usr/local/bin/
+  sudo chmod +x /usr/local/bin/git-diff.sh
+
+  rm -f ~/.gitconfig
+  git config --global user.name "Daniel Silvestre"
+  git config --global user.email daniel.silvestre@locaweb.com.br
+  git config --global color.ui true
+  git config --global diff.external /usr/local/bin/git-diff.sh
+
+  echo "Configurando o bash e vimrc"
+  git clone https://github.com/djlebersilvestre/vim ~/.vim
+  git clone https://github.com/djlebersilvestre/bash ~/.bash
+  rm -f ~/.bashrc ~/.bash_profile ~/.profile ~/.vimrc
+  ln -s ~/.bash/bashrc ~/.bashrc
+  ln -s ~/.bash/bash_profile ~/.bash_profile
+  ln -s ~/.vim/vimrc ~/.vimrc
 }
 
 grive() {
@@ -23,14 +51,6 @@ grive() {
   sudo apt-get --yes --force-yes install grive-tools
 
   echo "Agora configure o Grive (Grive Setup no launcher) e faça o sync completo da nuvem..."
-}
-
-bash() {
-  echo "Configurando o bash, vimrc e senha do root (depende do sync do Drive)"
-  rm -f ~/.bashrc ~/.bash_profile ~/.profile ~/.vimrc
-  ln -s ~/Google\ Drive/bash/bashrc ~/.bashrc
-  ln -s ~/Google\ Drive/bash/bash_profile ~/.bash_profile
-  ln -s ~/Google\ Drive/vim/vimrc ~/.vimrc
 }
 
 ssh() {
@@ -50,27 +70,16 @@ packages() {
     sudo apt-add-repository ppa:werner-jaeger/ppa-werner-vpn
   fi
 
-  # Fix para o popcorn time
-  sudo ln -s /lib/x86_64-linux-gnu/libudev.so.1 /lib/x86_64-linux-gnu/libudev.so.0
+  if [ -e "/lib/x86_64-linux-gnu/libudev.so.0" ]; then
+    echo "Lib já linkada, pulando fix do popcorn time"
+  else
+    echo "Aplicando fix do popcorn time"
+    sudo ln -s /lib/x86_64-linux-gnu/libudev.so.1 /lib/x86_64-linux-gnu/libudev.so.0
+  fi
 
   echo "Atualizando e instalando todos os pacotes desejados"
   sudo apt-get update
-  sudo apt-get --yes --force-yes install vim xbacklight powertop curl screen radiotray filezilla git meld gitk l2tp-ipsec-vpn pdfshuffler planner gimp nfs-kernel-server nfs-common portmap
-}
-
-git() {
-  echo "Configurando o git"
-  sudo rm -f /usr/local/bin/git-diff.sh
-  echo '#!/bin/bash' >> git-diff.sh
-  echo 'meld "$2" "$5" > /dev/null 2>&1' >> git-diff.sh
-  sudo mv git-diff.sh /usr/local/bin/
-  sudo chmod +x /usr/local/bin/git-diff.sh
-
-  rm -f ~/.gitconfig
-  git config --global user.name "Daniel Silvestre"
-  git config --global user.email daniel.silvestre@locaweb.com.br
-  git config --global color.ui true
-  git config --global diff.external /usr/local/bin/git-diff.sh
+  sudo apt-get --yes --force-yes install vim xbacklight powertop curl screen radiotray filezilla l2tp-ipsec-vpn pdfshuffler planner gimp nfs-kernel-server nfs-common portmap
 }
 
 rvm() {
