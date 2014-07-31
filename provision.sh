@@ -53,10 +53,28 @@ grive() {
   echo "Agora configure o Grive (Grive Setup no launcher) e faça o sync completo da nuvem..."
 }
 
+gdrive() {
+  if [ -e "/etc/apt/sources.list.d/alessandro-strada-ppa-precise.list" ]; then
+    echo "Repositório para instalação do Gdrive já existe. Pulando sua inclusão"
+  else
+    echo "Adicionando repositório para instalação do Gdrive (Google Drive Client)"
+    sudo apt-add-repository ppa:alessandro-strada/ppa
+  fi
+
+  sudo apt-get update
+  sudo apt-get --yes --force-yes install grive-tools
+
+  mkdir -p ~/googledrive
+  sudo usermod -a -G fuse daniel
+  exec su -l $USER
+  echo "Agora configure o Gdrive (google-drive-ocamlfuse) e monte na pasta (google-drive-ocamlfuse ~/gdrive). Para desmontar (fusermount -u ~/gdrive)"
+  echo "Mais detalhes tais como automount em http://xmodulo.com/2013/10/mount-google-drive-linux.html"
+}
+
 ssh() {
   echo "Copiando chaves ssh e configurando pasta no home (depende do sync do Drive)"
   mkdir -p ~/.ssh
-  cp -R ~/Google\ Drive/ssh/* ~/.ssh
+  cp -R ~/gdrive/ssh/* ~/.ssh
   chmod 600 ~/.ssh/vpn/*
   chmod 600 ~/.ssh/*
   chmod 700 ~/.ssh/vpn/
@@ -68,6 +86,15 @@ packages() {
   else
     echo "Adicionando repositório para instalação da VPN"
     sudo apt-add-repository ppa:werner-jaeger/ppa-werner-vpn
+  fi
+
+  if [ -e "/etc/apt/sources.list.d/pipelight-stable-precise.list" ]; then
+    echo "Repositório para instalação do Netflix Desktop já existe. Pulando sua inclusão"
+  else
+    echo "Adicionando repositório para instalação do Netflix Desktop"
+    sudo apt-add-repository ppa:pipelight/stable
+    # Se falhar por causa das fontes, chamar o comando abaixo
+    # sudo apt-get --purge --reinstall install ttf-mscorefonts-installer
   fi
 
   if [ -e "/lib/x86_64-linux-gnu/libudev.so.0" ]; then
@@ -92,7 +119,7 @@ rvm() {
   rvm use 1.9.2 --default
 
   echo "Instalando plugins do vim"
-  cd  ~/Google\ Drive/vim/
+  cd  ~/googledrive/vim/
   chmod +x  update_bundles
   ./update_bundles
 }
@@ -130,8 +157,11 @@ case "$1" in
   first)
     first
     ;;
-  grive)
-    grive
+  git)
+    git
+    ;;
+  gdrive)
+    gdrive
     ;;
   bash)
     bash
@@ -141,9 +171,6 @@ case "$1" in
     ;;
   packages)
     packages
-    ;;
-  git)
-    git
     ;;
   rvm)
     rvm
@@ -162,12 +189,12 @@ case "$1" in
     rvm
     ;;
   *)
-    echo "Usage: $0 {first|grive|bash|ssh|packages|git|rvm|virtualbox|vagrant}"
+    echo "Usage: $0 {first|git|gdrive|bash|ssh|packages|rvm|virtualbox|vagrant}"
     echo ""
 #    echo "Details"
 #    echo "  first:     first update on packages"
-#    echo "  copy:      copy basic files such as ssh keys and virtual box debian image (used by vagrant). Must have the dirs 'Google Drive/ssh' and 'Área de Trabalho/debian...'"
-#    echo "  bash:      config bash scripts and vim. Must have finished the Grive sync so the dirs 'Google Drive/bash' and 'Google Drive/vim' exists"
+#    echo "  copy:      copy basic files such as ssh keys and virtual box debian image (used by vagrant). Must have the dirs 'googledrive/ssh' and 'Área de Trabalho/debian...'"
+#    echo "  bash:      config bash scripts and vim. Must have finished the Grive sync so the dirs 'googledrive/bash' and 'googledrive/vim' exists"
 #    echo "  packages:  install all basic packages such as virtual box, git, vim and so on"
 #    echo "  git:       configure git, merger etc"
 #    echo "  rvm:       install and set rvm to use ruby"
@@ -177,7 +204,7 @@ case "$1" in
     echo "Flow"
     echo "  (1)first > (2)[copy files to desktop, setup Grive and wait for sync] > (3)setup > (4)[configure VirtualBox manually] > (5)vagrant"
     echo "  copy:      copy basic files such as ssh keys and virtual box debian image (used by vagrant). Must have in desktop the dirs 'chave' and 'debian...'"
-    echo "  bash:      config bash scripts and vim. Must have finished the Grive sync so the dirs 'Google Drive/bash' and 'Google Drive/vim' exists"
+    echo "  bash:      config bash scripts and vim. Must have finished the Grive sync so the dirs 'googledrive/bash' and 'googledrive/vim' exists"
     echo "  packages:  install all basic packages such as virtual box, git, vim and so on"
     echo "  git:       configure git, merger etc"
     echo "  rvm:       install and set rvm to use ruby"
