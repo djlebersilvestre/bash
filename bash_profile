@@ -1,3 +1,7 @@
+# Variáveis de controle do script de provisionamento (pacotes atualizados? senha root setada?)
+export PROV_FIRST_UPDATE=true
+export PROV_FIRST_ROOT_PASS=true
+
 # set PATH so it includes user's private bin if it exists
 if [ -d "$HOME/bin" ] ; then
     PATH="$HOME/bin:$PATH"
@@ -42,3 +46,4 @@ alias Rspec='bundle exec rspec'
 alias Cucumber='rm rerun.txt; Rake cucumber'
 
 # rename s/.yml.example/.yml/ *.yml.* # to mv all files from *.yml.example to *.yml
+
