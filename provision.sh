@@ -1,15 +1,36 @@
 #!/bin/bash
 
 RETVAL=0
+PROV_HOME_DIR=/home/dani
 
 first() {
-  echo "Primeira execução. Atualizando todos os pacotes da distro"
-  sudo apt-get update
-  sudo apt-get --yes --force-yes upgrade
+  if [ "$PROV_FIRST_ROOT_PASS" = true ]; then
+    echo "A senha do root já foi configurada"
+  else
+    exit_code=1
+    while [ $exit_code != 0 ]; do
+      echo "Por favor, configure a senha do root"
+      sudo passwd root
+      exit_code=$?
+    done
 
-  echo "Por favor, configure a senha do root"
-  sudo passwd root
-  sudo reboot
+    export PROV_FIRST_ROOT_PASS=true
+    echo 'export PROV_FIRST_ROOT_PASS=true' >> $PROV_HOME_DIR/.bash_profile
+  fi
+
+  if [ "$PROV_FIRST_UPDATE" = true ]; then
+    echo "Os pacotes da distro já foram autalizados"
+  else
+    echo "Primeira execução. Atualizando todos os pacotes da distro"
+    sudo apt-get update
+    sudo apt-get --yes --force-yes upgrade
+
+    export PROV_FIRST_UPDATE=true
+    echo 'export PROV_FIRST_UPDATE=true' >> $PROV_HOME_DIR/.bash_profile
+
+    echo "Reiniciando para aplicar todas atualizações"
+    sudo reboot
+  fi
 }
 
 git() {
