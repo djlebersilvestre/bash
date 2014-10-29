@@ -3,7 +3,7 @@
 RETVAL=0
 
 is_gdrive_working() {
-  if [ ! -d "~/gdrive" ] || [ ! -d "~/gdrive/ssh" ] || [ ! -d "~/gdrive/ssh/vpn" ]; then
+  if [ ! -d "$HOME/gdrive" ] || [ ! -d "$HOME/gdrive/ssh" ] || [ ! -d "$HOME/gdrive/ssh/vpn" ]; then
     return 1
   else
     return 0
@@ -63,7 +63,7 @@ first_step() {
     done
 
     export PROV_FIRST_ROOT_PASS=true
-    echo 'export PROV_FIRST_ROOT_PASS=true' >> ~/.bash_profile
+    echo 'export PROV_FIRST_ROOT_PASS=true' >> ~/.bashrc
   fi
 
   if [ "$PROV_FIRST_UPDATE" = true ]; then
@@ -74,7 +74,7 @@ first_step() {
     sudo apt-get --yes --force-yes upgrade
 
     export PROV_FIRST_UPDATE=true
-    echo 'export PROV_FIRST_UPDATE=true' >> ~/.bash_profile
+    echo 'export PROV_FIRST_UPDATE=true' >> ~/.bashrc
 
     echo "Reiniciando para aplicar todas atualizações"
     sudo reboot
@@ -117,22 +117,8 @@ git_step() {
   ln -s ~/.vim/vimrc ~/.vimrc
 }
 
-# grive() {
-#   if [ -e "/etc/apt/sources.list.d/thefanclub-grive-tools-trusty.list" ]; then
-#     echo "Repositório para instalação do Grive já existe. Pulando sua inclusão"
-#   else
-#     echo "Adicionando repositório para instalação do Grive (Google Drive Client)"
-#     sudo apt-add-repository ppa:thefanclub/grive-tools
-#   fi
-# 
-#   sudo apt-get update
-#   sudo apt-get --yes --force-yes install grive-tools
-# 
-#   echo "Agora configure o Grive (Grive Setup no launcher) e faça o sync completo da nuvem..."
-# }
-
 gdrive_step_done() {
-  if false; then
+  if [ -e "/etc/apt/sources.list.d/alessandro-strada-ppa-trusty.list" ] && is_gdrive_working; then
     echo 'gdrive_step_done...true'
     return 0
   else
@@ -142,7 +128,7 @@ gdrive_step_done() {
 }
 
 gdrive_step() {
-  if [ -e "/etc/apt/sources.list.d/alessandro-strada-ppa-trusty.list" ] || [ -d "~/gdrive" ]; then
+  if [ -e "/etc/apt/sources.list.d/alessandro-strada-ppa-trusty.list" ]; then
     echo "Repositório para instalação do Gdrive já existe. Pulando sua inclusão"
   else
     echo "Adicionando repositório para instalação do Gdrive (google-drive-ocamlfuse)"
@@ -153,9 +139,11 @@ gdrive_step() {
 
   mkdir -p ~/gdrive
   sudo usermod -a -G fuse $USER
-  echo "Agora configure o Gdrive (google-drive-ocamlfuse) e monte na pasta (google-drive-ocamlfuse ~/gdrive). Para desmontar (fusermount -u ~/gdrive)"
+  echo "Será aberto o navegador para configurar e autorizar o Google Drive a acessar dados do google. Favor proceder com as configuracoes"
+  google-drive-ocamlfuse
+  google-drive-ocamlfuse ~/gdrive
+  echo "Para montar o drive (google-drive-ocamlfuse ~/gdrive). Para desmontar (fusermount -u ~/gdrive)"
   echo "Mais detalhes tais como automount em http://xmodulo.com/2013/10/mount-google-drive-linux.html"
-  exec su -l $USER
 }
 
 ssh_step_done() {
@@ -206,8 +194,6 @@ packages_step() {
     echo "Adicionando repositório para instalação do Netflix Desktop"
     sudo apt-add-repository ppa:pipelight/stable
     should_update_pkgs=true
-
-    # sudo apt-get --purge --reinstall install ttf-mscorefonts-installer
   fi
 
   if [ -e "/etc/apt/sources.list.d/google.list" ]; then
@@ -238,7 +224,7 @@ packages_step() {
   sudo apt-get --purge --reinstall --yes --force-yes install ttf-mscorefonts-installer
 
   echo "Não esqueça de:"
-  echo " - Setar em aplicativos de sessão o brilho do monitor (xbacklight -set 70)"
+  echo " - Setar em aplicativos de sessão o brilho do monitor (/usr/bin/xbacklight -set 70)"
   echo " - Rodar a primeira vez o Netflix Desktop para configurá-lo"
   echo " - Adicionar apps no launcher: Chrome, Netflix"
 }
@@ -255,7 +241,8 @@ rvm_step_done() {
 
 rvm_step() {
   echo "Instalando o rvm"
-  \curl -L https://get.rvm.io | bash -s stable
+  gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
+  \curl -sSL https://get.rvm.io | bash -s stable
   rm -f ~/.profile
   source ~/.bash_profile
   type rvm | head -n 1
@@ -266,8 +253,8 @@ rvm_step() {
   rvm use 2.1.2 --default
 
   echo "Instalando plugins do vim"
-  cd  ~/googledrive/vim/
-  chmod +x  update_bundles
+  cd ~/.vim/
+  chmod +x update_bundles
   ./update_bundles
 }
 
