@@ -109,6 +109,7 @@ gdrive_step() {
 
   mkdir -p ~/gdrive
   sudo usermod -a -G fuse $USER
+  source ~/.bashrc
   echo "Será aberto o navegador para configurar e autorizar o Google Drive a acessar dados do google. Favor proceder com as configuracoes"
   google-drive-ocamlfuse
   google-drive-ocamlfuse ~/gdrive
@@ -168,7 +169,7 @@ packages_step() {
   fi
 
   echo "Atualizando e instalando todos os pacotes desejados"
-  install_pkgs 'vim apache2-utils xbacklight powertop curl screen radiotray filezilla pdfshuffler gimp nfs-kernel-server nfs-common google-chrome-stable netflix-desktop'
+  install_pkgs 'vim apache2-utils xbacklight powertop curl screen htop radiotray filezilla pdfshuffler gimp nfs-kernel-server nfs-common google-chrome-stable netflix-desktop'
 
   # Dependencias para o Netflix Desktop
   sudo apt-get --purge --reinstall --yes --force-yes install ttf-mscorefonts-installer
@@ -229,11 +230,11 @@ vagrant_step() {
 }
 
 case "$1" in
-  git)
-    git_step
-    ;;
   first)
     first_step
+    ;;
+  git)
+    git_step
     ;;
   packages)
     packages_step
@@ -254,21 +255,21 @@ case "$1" in
     vagrant_step
     ;;
   setup)
-    git_step
     first_step
+    git_step
     packages_step
     gdrive_step
     ssh_step
     rvm_step
     ;;
   *)
-    echo "Usage: $0 {setup|first|packages|git|gdrive|ssh|rvm|virtualbox|vagrant}"
+    echo "Usage: $0 {setup|first|git|packages|gdrive|ssh|rvm|virtualbox|vagrant}"
     echo ""
     echo "Details"
-    echo "  setup:      RECOMMENDED: triggers first|packages|git|gdrive|ssh|rvm"
+    echo "  setup:      RECOMMENDED: triggers first > packages > git > gdrive > ssh > rvm"
     echo "  first:      first update on packages and setup of root password"
-    echo "  packages:   install all basic packages such as vim, screen and so on"
     echo "  git:        configure git, merger and installs the default bash and vim scripts"
+    echo "  packages:   install all basic packages such as vim, screen and so on"
     echo "  gdrive:     install and setup the google drive"
     echo "  ssh:        configure default SSH keys (depends on gdrive)"
     echo "  rvm:        install and set rvm to use ruby, also updates the vim bundles"
