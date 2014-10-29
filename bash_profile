@@ -31,6 +31,8 @@ alias gmv='git mv'
 alias gdf='git diff'
 alias gttest='git tag | grep testing | sort -V'
 alias gtstable='git tag | grep stable | sort -V'
+alias gdrive='google-drive-ocamlfuse ~/gdrive; cd ~/gdrive'
+alias gdriveumount='cd ~; fusermount -u ~/gdrive'
 
 # Atalhos do SSH
 alias gateway='ssh -i ~/.ssh/id_rsa_gateway _dsilvestre@nibbler0001.linux.locaweb.com.br'
