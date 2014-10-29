@@ -41,16 +41,6 @@ install_pkgs() {
   sudo apt-get --yes --force-yes install $pkgs
 }
 
-first_step_done() {
-  if [ "$PROV_FIRST_ROOT_PASS" != true ] && [ "$PROV_FIRST_UPDATE" = true ]; then
-    echo 'first_step_done...true'
-    return 0
-  else
-    echo 'first_step_done...false'
-    return 1
-  fi
-}
-
 first_step() {
   if [ "$PROV_FIRST_ROOT_PASS" = true ]; then
     echo "A senha do root já foi configurada"
@@ -81,16 +71,6 @@ first_step() {
   fi
 }
 
-git_step_done() {
-  if false; then
-    echo 'git_step_done...true'
-    return 0
-  else
-    echo 'git_step_done...false'
-    return 1
-  fi
-}
-
 git_step() {
   echo "Atualizando e instalando o git"
   install_pkgs 'git meld gitk'
@@ -117,16 +97,6 @@ git_step() {
   ln -s ~/.vim/vimrc ~/.vimrc
 }
 
-gdrive_step_done() {
-  if [ -e "/etc/apt/sources.list.d/alessandro-strada-ppa-trusty.list" ] && is_gdrive_working; then
-    echo 'gdrive_step_done...true'
-    return 0
-  else
-    echo 'gdrive_step_done...false'
-    return 1
-  fi
-}
-
 gdrive_step() {
   if [ -e "/etc/apt/sources.list.d/alessandro-strada-ppa-trusty.list" ]; then
     echo "Repositório para instalação do Gdrive já existe. Pulando sua inclusão"
@@ -146,16 +116,6 @@ gdrive_step() {
   echo "Mais detalhes tais como automount em http://xmodulo.com/2013/10/mount-google-drive-linux.html"
 }
 
-ssh_step_done() {
-  if false; then
-    echo 'ssh_step_done...true'
-    return 0
-  else
-    echo 'ssh_step_done...false'
-    return 1
-  fi
-}
-
 ssh_step() {
   check_gdrive
 
@@ -167,16 +127,6 @@ ssh_step() {
   chmod 700 ~/.ssh/vpn/
 }
 
-packages_step_done() {
-  if false; then
-    echo 'packages_step_done...true'
-    return 0
-  else
-    echo 'packages_step_done...false'
-    return 1
-  fi
-}
-
 packages_step() {
   #TODO: find alternatives to locaweb VPN
   # if [ -e "/etc/apt/sources.list.d/werner-jaeger-ppa-werner-vpn-trusty.list" ]; then
@@ -185,6 +135,7 @@ packages_step() {
     # echo "Adicionando repositório para instalação da VPN"
     # sudo apt-add-repository ppa:werner-jaeger/ppa-werner-vpn
     # update_pkgs true
+    # install_pkgs 'l2tp-ipsec-vpn'
   # fi
 
   should_update_pkgs=false
@@ -218,7 +169,6 @@ packages_step() {
 
   echo "Atualizando e instalando todos os pacotes desejados"
   install_pkgs 'vim apache2-utils xbacklight powertop curl screen radiotray filezilla pdfshuffler gimp nfs-kernel-server nfs-common google-chrome-stable netflix-desktop'
-  # install_pkgs 'l2tp-ipsec-vpn'
 
   # Dependencias para o Netflix Desktop
   sudo apt-get --purge --reinstall --yes --force-yes install ttf-mscorefonts-installer
@@ -227,16 +177,6 @@ packages_step() {
   echo " - Setar em aplicativos de sessão o brilho do monitor (/usr/bin/xbacklight -set 70)"
   echo " - Rodar a primeira vez o Netflix Desktop para configurá-lo"
   echo " - Adicionar apps no launcher: Chrome, Netflix"
-}
-
-rvm_step_done() {
-  if false; then
-    echo 'rvm_step_done...true'
-    return 0
-  else
-    echo 'rvm_step_done...false'
-    return 1
-  fi
 }
 
 rvm_step() {
@@ -252,20 +192,11 @@ rvm_step() {
   rvm install 2.1.4
   rvm use 2.1.2 --default
 
+  #TODO: check if it is already updated
   echo "Instalando plugins do vim"
   cd ~/.vim/
   chmod +x update_bundles
   ./update_bundles
-}
-
-virtualbox_step_done() {
-  if false; then
-    echo 'virtualbox_step_done...true'
-    return 0
-  else
-    echo 'virtualbox_step_done...false'
-    return 1
-  fi
 }
 
 virtualbox_step() {
@@ -287,16 +218,6 @@ virtualbox_step() {
   echo "Agora configure o VirtualBox (baixar e instalar os additionals e importar as VMs base)..."
 }
 
-vagrant_step_done() {
-  if false; then
-    echo 'vagrant_step_done...true'
-    return 0
-  else
-    echo 'vagrant_step_done...false'
-    return 1
-  fi
-}
-
 vagrant_step() {
   echo "Após iniciar o VirtualBox e colocar a VM base nele, executar este para instalar o Vagrant"
   VAGRANT_VERSION=vagrant_1.6.5_x86_64.deb
@@ -307,13 +228,10 @@ vagrant_step() {
   vagrant box add debian-wheezy-amd64-base debian-wheezy-amd64-base.box
 }
 
-check_flow() {
-  echo "Missing implementation but I wish to list the status of the installation flow and point to what is missing"
-  #TODO: each step must have a standard check with boolean response to say if the step is done or not
-  first_step_done
-}
-
 case "$1" in
+  git)
+    git_step
+    ;;
   first)
     first_step
     ;;
@@ -326,9 +244,6 @@ case "$1" in
   ssh)
     ssh_step
     ;;
-  git)
-    git_step
-    ;;
   rvm)
     rvm_step
     ;;
@@ -338,36 +253,27 @@ case "$1" in
   vagrant)
     vagrant_step
     ;;
-  check_flow)
-    check_flow
-    ;;
   setup)
+    git_step
     first_step
     packages_step
+    gdrive_step
     ssh_step
-    git_step
     rvm_step
     ;;
   *)
-    echo "Usage: $0 {first|packages|gdrive|ssh|git|rvm|virtualbox|vagrant}"
+    echo "Usage: $0 {setup|first|packages|git|gdrive|ssh|rvm|virtualbox|vagrant}"
     echo ""
-#    echo "Details"
-#    echo "  first:     first update on packages"
-#    echo "  copy:      copy basic files such as ssh keys and virtual box debian image (used by vagrant). Must have the dirs 'googledrive/ssh' and 'Área de Trabalho/debian...'"
-#    echo "  packages:  install all basic packages such as virtual box, git, vim and so on"
-#    echo "  git:       configure git, merger etc"
-#    echo "  rvm:       install and set rvm to use ruby"
-#    echo "  vagrant:   manually install vagrant. Must have VirtualBox configured with extensions pack and debian base VM. Also, must have the vagrant '.deb' package in your home dir"
-#    echo "  setup:     triggers copy|bash|packages|git|rvm"
-#    echo ""
-    echo "Flow"
-    echo "  (1)first > (2)[copy files to desktop, setup Grive and wait for sync] > (3)setup > (4)[configure VirtualBox manually] > (5)vagrant"
-    echo "  copy:      copy basic files such as ssh keys and virtual box debian image (used by vagrant). Must have in desktop the dirs 'chave' and 'debian...'"
-    echo "  bash:      config bash scripts and vim. Must have finished the Grive sync so the dirs 'googledrive/bash' and 'googledrive/vim' exists"
-    echo "  packages:  install all basic packages such as virtual box, git, vim and so on"
-    echo "  git:       configure git, merger etc"
-    echo "  rvm:       install and set rvm to use ruby"
-    echo "  vagrant:   manually install vagrant. Must have VirtualBox configured with extensions pack and debian base VM. Also, must have the vagrant '.deb' package in desktop"
+    echo "Details"
+    echo "  setup:      RECOMMENDED: triggers first|packages|git|gdrive|ssh|rvm"
+    echo "  first:      first update on packages and setup of root password"
+    echo "  packages:   install all basic packages such as vim, screen and so on"
+    echo "  git:        configure git, merger and installs the default bash and vim scripts"
+    echo "  gdrive:     install and setup the google drive"
+    echo "  ssh:        configure default SSH keys (depends on gdrive)"
+    echo "  rvm:        install and set rvm to use ruby, also updates the vim bundles"
+    echo "  virtualbox: manually install VirtualBox"
+    echo "  vagrant:    manually install vagrant. Must have VirtualBox configured with extensions pack and debian base VM"
     echo ""
     RETVAL=1
 esac
