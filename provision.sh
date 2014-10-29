@@ -190,6 +190,7 @@ packages_step_done() {
 }
 
 packages_step() {
+  #TODO: find alternatives to locaweb VPN
   # if [ -e "/etc/apt/sources.list.d/werner-jaeger-ppa-werner-vpn-trusty.list" ]; then
     # echo "Repositório para instalação da VPN já existe. Pulando sua inclusão"
   # else
@@ -198,14 +199,24 @@ packages_step() {
     # update_pkgs true
   # fi
 
+  should_update_pkgs=false
   if [ -e "/etc/apt/sources.list.d/pipelight-stable-trusty.list" ]; then
     echo "Repositório para instalação do Netflix Desktop já existe. Pulando sua inclusão"
   else
     echo "Adicionando repositório para instalação do Netflix Desktop"
     sudo apt-add-repository ppa:pipelight/stable
-    update_pkgs true
-    # Se falhar por causa das fontes, chamar o comando abaixo
+    should_update_pkgs=true
+
     # sudo apt-get --purge --reinstall install ttf-mscorefonts-installer
+  fi
+
+  if [ -e "/etc/apt/sources.list.d/google.list" ]; then
+    echo "Repositório para instalação do Google Chrome já existe. Pulando sua inclusão"
+  else
+    echo "Adicionando repositório para instalação do Google Chrome"
+    wget -q https://dl-ssl.google.com/linux/linux_signing_key.pub -O- | sudo apt-key add -
+    sudo bash -c "echo deb http://dl.google.com/linux/chrome/deb/ stable main >> /etc/apt/sources.list.d/google.list"
+    should_update_pkgs=true
   fi
 
   if [ -e "/lib/x86_64-linux-gnu/libudev.so.0" ]; then
@@ -215,9 +226,21 @@ packages_step() {
     sudo ln -s /lib/x86_64-linux-gnu/libudev.so.1 /lib/x86_64-linux-gnu/libudev.so.0
   fi
 
+  if should_update_pkgs; then
+    update_pkgs true
+  fi
+
   echo "Atualizando e instalando todos os pacotes desejados"
-  install_pkgs 'vim apache2-utils xbacklight powertop curl screen radiotray filezilla pdfshuffler gimp nfs-kernel-server nfs-common l2tp-ipsec-vpn'
+  install_pkgs 'vim apache2-utils xbacklight powertop curl screen radiotray filezilla pdfshuffler gimp nfs-kernel-server nfs-common google-chrome-stable netflix-desktop'
   # install_pkgs 'l2tp-ipsec-vpn'
+
+  # Dependencias para o Netflix Desktop
+  sudo apt-get --purge --reinstall --yes --force-yes install ttf-mscorefonts-installer
+
+  echo "Não esqueça de:"
+  echo " - Setar em aplicativos de sessão o brilho do monitor (xbacklight -set 70)"
+  echo " - Rodar a primeira vez o Netflix Desktop para configurá-lo"
+  echo " - Adicionar apps no launcher: Chrome, Netflix"
 }
 
 rvm_step_done() {
@@ -237,7 +260,10 @@ rvm_step() {
   source ~/.bash_profile
   type rvm | head -n 1
   rvm install 1.9.2
-  rvm use 1.9.2 --default
+  rvm install 1.9.3
+  rvm install 2.1.2
+  rvm install 2.1.4
+  rvm use 2.1.2 --default
 
   echo "Instalando plugins do vim"
   cd  ~/googledrive/vim/
