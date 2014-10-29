@@ -209,24 +209,36 @@ virtualbox_step() {
     sudo bash -c "echo deb http://download.virtualbox.org/virtualbox/debian trusty contrib >> /etc/apt/sources.list"
   fi
 
-  sudo apt-get update
-  sudo apt-get --yes --force-yes install virtualbox-4.3
+  install_pkgs 'virtualbox-4.3'
 
-  mkdir ~/vbox
+  mkdir -p ~/vbox
+  #TODO: auto copy files
   #mv ~/Área\ de\ Trabalho/debian_7.0.0-amd64-base/ ~/vbox/
   #mv ~/Área\ de\ Trabalho/debian-wheezy-amd64-base.box ~/vbox/
 
-  echo "Agora configure o VirtualBox (baixar e instalar os additionals e importar as VMs base)..."
+  echo "Baixando o extension pack"
+  #TODO: auto find the version
+  cd ~
+  VBOX_PATH=4.3.18
+  VBOX_VERSION=Oracle_VM_VirtualBox_Extension_Pack-4.3.18-96516.vbox-extpack
+  wget http://download.virtualbox.org/virtualbox/$VBOX_PATH/$VBOX_VERSION
+
+  echo "Agora configure o VirtualBox (instalar os additionals [https://www.virtualbox.org/wiki/Downloads] e importar as VMs base)..."
+  /usr/bin/virtualbox
+  rm $VBOX_VERSION
 }
 
 vagrant_step() {
   echo "Após iniciar o VirtualBox e colocar a VM base nele, executar este para instalar o Vagrant"
+  cd ~
   VAGRANT_VERSION=vagrant_1.6.5_x86_64.deb
   wget https://dl.bintray.com/mitchellh/vagrant/$VAGRANT_VERSION
   sudo dpkg -i ~/$VAGRANT_VERSION
+
   rm ~/$VAGRANT_VERSION
   cd ~/vbox/
-  vagrant box add debian-wheezy-amd64-base debian-wheezy-amd64-base.box
+  #TODO: install only if files are available
+  # vagrant box add debian-wheezy-amd64-base debian-wheezy-amd64-base.box
 }
 
 case "$1" in
