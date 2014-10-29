@@ -212,33 +212,44 @@ virtualbox_step() {
   install_pkgs 'virtualbox-4.3'
 
   mkdir -p ~/vbox
-  #TODO: auto copy files
-  #mv ~/Área\ de\ Trabalho/debian_7.0.0-amd64-base/ ~/vbox/
-  #mv ~/Área\ de\ Trabalho/debian-wheezy-amd64-base.box ~/vbox/
+  if [ -d "/tmp/vbox/debian_7.0.0-amd64-base/" ]; then
+    mv /tmp/vbox/debian_7.0.0-amd64-base/ ~/vbox/
+  fi
+  if [ -e "/tmp/vbox/debian-wheezy-amd64-base.box" ]; then
+    mv /tmp/vbox/debian-wheezy-amd64-base.box ~/vbox/
+  fi
+  rmdir /tmp/vbox
 
   echo "Baixando o extension pack"
   #TODO: auto find the version
-  cd ~
-  VBOX_PATH=4.3.18
-  VBOX_VERSION=Oracle_VM_VirtualBox_Extension_Pack-4.3.18-96516.vbox-extpack
-  wget http://download.virtualbox.org/virtualbox/$VBOX_PATH/$VBOX_VERSION
+  VBOX_EXT_PATH=4.3.18
+  VBOX_EXT_VERSION=Oracle_VM_VirtualBox_Extension_Pack-4.3.18-96516.vbox-extpack
 
-  echo "Agora configure o VirtualBox (instalar os additionals [https://www.virtualbox.org/wiki/Downloads] e importar as VMs base)..."
+  cd ~
+  wget http://download.virtualbox.org/virtualbox/$VBOX_EXT_PATH/$VBOX_EXT_VERSION
+
+  echo "Agora configure o VirtualBox (instalar os additionals em $HOME/$VBOX_EXT_VERSION e importar as VMs base)..."
   /usr/bin/virtualbox
-  rm $VBOX_VERSION
+
+  rm $VBOX_EXT_VERSION
 }
 
 vagrant_step() {
   echo "Após iniciar o VirtualBox e colocar a VM base nele, executar este para instalar o Vagrant"
-  cd ~
+
+  #TODO: auto find the version
   VAGRANT_VERSION=vagrant_1.6.5_x86_64.deb
+
+  cd ~
   wget https://dl.bintray.com/mitchellh/vagrant/$VAGRANT_VERSION
   sudo dpkg -i ~/$VAGRANT_VERSION
 
   rm ~/$VAGRANT_VERSION
   cd ~/vbox/
-  #TODO: install only if files are available
-  # vagrant box add debian-wheezy-amd64-base debian-wheezy-amd64-base.box
+
+  if [ -d "$HOME/vbox/debian_7.0.0-amd64-base/" ] && [ -e "$HOME/vbox/debian-wheezy-amd64-base.box" ]; then
+    vagrant box add debian-wheezy-amd64-base debian-wheezy-amd64-base.box
+  fi
 }
 
 case "$1" in
@@ -273,20 +284,22 @@ case "$1" in
     gdrive_step
     ssh_step
     rvm_step
+    virtualbox_step
+    vagrant_step
     ;;
   *)
     echo "Usage: $0 {setup|first|git|packages|gdrive|ssh|rvm|virtualbox|vagrant}"
     echo ""
     echo "Details"
-    echo "  setup:      RECOMMENDED: triggers first > packages > git > gdrive > ssh > rvm"
+    echo "  setup:      RECOMMENDED - triggers all: first > packages > git > gdrive > ssh > rvm > virtualbox > vagrant"
     echo "  first:      first update on packages and setup of root password"
     echo "  git:        configure git, merger and installs the default bash and vim scripts"
     echo "  packages:   install all basic packages such as vim, screen and so on"
-    echo "  gdrive:     install and setup the google drive"
+    echo "  gdrive:     install and setup the google drive (requires manual steps)"
     echo "  ssh:        configure default SSH keys (depends on gdrive)"
     echo "  rvm:        install and set rvm to use ruby, also updates the vim bundles"
-    echo "  virtualbox: manually install VirtualBox"
-    echo "  vagrant:    manually install vagrant. Must have VirtualBox configured with extensions pack and debian base VM"
+    echo "  virtualbox: install VirtualBox (requires manual steps)"
+    echo "  vagrant:    install vagrant"
     echo ""
     RETVAL=1
 esac
