@@ -17,6 +17,9 @@ function parse_git_branch {
 export PS1="\[\033[38m\]\u@\h\[\033[01;34m\] \w \[\033[31m\]\$(parse_git_branch)\[\033[37m\]$\[\033[00m\] "
 export RUBYOPT=-Ku
 
+# Atalhos do provisionador
+alias prov_setup='$HOME/.bash/provision.sh setup'
+
 # Atalhos do GIT
 alias gst='git status'
 alias gcm='git commit'
@@ -31,6 +34,8 @@ alias gmv='git mv'
 alias gdf='git diff'
 alias gttest='git tag | grep testing | sort -V'
 alias gtstable='git tag | grep stable | sort -V'
+
+# Atalhos do google drive
 alias gdrive='google-drive-ocamlfuse ~/gdrive; cd ~/gdrive'
 alias gdriveumount='cd ~; fusermount -u ~/gdrive'
 
