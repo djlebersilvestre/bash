@@ -169,7 +169,7 @@ packages_step() {
   fi
 
   echo "Atualizando e instalando todos os pacotes desejados"
-  install_pkgs 'vim apache2-utils xbacklight powertop curl screen htop radiotray filezilla pdfshuffler gimp nfs-kernel-server nfs-common google-chrome-stable netflix-desktop'
+  install_pkgs 'vim apache2-utils xbacklight powertop curl screen htop radiotray filezilla pdfshuffler gimp nfs-kernel-server nfs-common google-chrome-stable netflix-desktopi whois'
 
   # Dependencias para o Netflix Desktop
   sudo apt-get --purge --reinstall --yes --force-yes install ttf-mscorefonts-installer
@@ -303,6 +303,9 @@ case "$1" in
     echo ""
     RETVAL=1
 esac
+
+#TODO: https://code.google.com/p/gitinspector/downloads/list incluir como dependência
+#TODO: http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html automatizar instalação do Java
 
 exit $RETVAL
 
