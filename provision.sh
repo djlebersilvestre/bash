@@ -151,6 +151,7 @@ packages_step() {
   echo "Updating and installing all desired packages"
   install_pkgs 'vim apache2-utils xbacklight curl screen htop pdfshuffler gimp google-chrome-stable netflix-desktop whois oracle-java8-installer'
   # standing by: powertop radiotray filezilla https://code.google.com/p/gitinspector/downloads/list
+  #TODO: http://download.skype.com/linux/skype-ubuntu-precise_4.3.0.37-1_i386.deb
 
   # Dependencies for Netflix
   sudo apt-get --purge --reinstall --yes --force-yes install ttf-mscorefonts-installer
