@@ -161,6 +161,14 @@ packages_step() {
   echo " - Add apps into the launcher: Chrome, Netflix"
 }
 
+copy_step() {
+  echo "Installing Copy (cloud storage)"
+  cd ~
+  wget https://copy.com/install/linux/Copy.tgz
+  mv ~/copy/ ~/.copy
+  .copy/x86_64/CopyAgent
+}
+
 rvm_step() {
   echo "Installing rvm"
   gpg --keyserver hkp://keys.gnupg.net --recv-keys D39DC0E3
@@ -194,7 +202,7 @@ virtualbox_step() {
   VBOX_EXT_PATH=4.3.24
   VBOX_EXT_BUILD=98716
   VBOX_EXT_VERSION=Oracle_VM_VirtualBox_Extension_Pack-$VBOX_EXT_PATH-$VBOX_EXT_BUILD.vbox-extpack
-  
+
   cd ~
   wget http://download.virtualbox.org/virtualbox/$VBOX_EXT_PATH/$VBOX_EXT_VERSION
 
