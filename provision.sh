@@ -162,11 +162,21 @@ packages_step() {
 }
 
 copy_step() {
-  echo "Installing Copy (cloud storage)"
-  cd ~
-  wget https://copy.com/install/linux/Copy.tgz
-  mv ~/copy/ ~/.copy
-  .copy/x86_64/CopyAgent
+  if ! is_copy_working; then
+    echo "Installing Copy (cloud storage)"
+
+    cd ~
+    rm -f ~/Copy.tg*
+    wget https://copy.com/install/linux/Copy.tgz
+
+    tar xvzf Copy.tgz
+    mv ~/copy/ ~/.copy
+
+    .copy/x86_64/CopyAgent
+    rm ~/Copy.tgz
+  else
+    echo "Copy is already installed"
+  fi
 }
 
 rvm_step() {
