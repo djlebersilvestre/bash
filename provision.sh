@@ -84,7 +84,7 @@ git_step() {
 
   rm -f ~/.gitconfig
   git config --global user.name "Daniel Silvestre"
-  git config --global user.email daniel.silvestre@locaweb.com.br
+  git config --global user.email djlebersilvestre@gmail.com
   git config --global color.ui true
   git config --global diff.external /usr/local/bin/git-diff.sh
 
