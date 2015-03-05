@@ -45,6 +45,10 @@ alias gdriveumount='cd ~; fusermount -u ~/gdrive'
 alias gateway='ssh -i ~/.ssh/id_rsa_gateway _dsilvestre@nibbler0001.linux.locaweb.com.br'
 
 # Atalhos do gerais
+sizeWithDu() {
+  du -a $1 | sort -n -r | head -n 15
+}
+alias size=sizeWithDu
 alias lss='ls -ltr'
 alias Rails='bundle exec rails'
 alias Server='Rails s'
