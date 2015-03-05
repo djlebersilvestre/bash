@@ -57,6 +57,3 @@ alias Ruby='bundle exec ruby'
 alias Rake='bundle exec rake'
 alias Rspec='bundle exec rspec'
 alias Cucumber='rm rerun.txt; Rake cucumber'
-
-# rename s/.yml.example/.yml/ *.yml.* # to mv all files from *.yml.example to *.yml
-
