@@ -112,3 +112,7 @@ fi
 
 PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
 JAVA_CMD=/usr/bin/java
+
+# Fixing cedilla issue in Linux
+GTK_IM_MODULE=cedilla
+QT_IM_MODULE=cedilla
