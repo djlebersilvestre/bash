@@ -45,10 +45,11 @@ alias gdriveumount='cd ~; fusermount -u ~/gdrive'
 alias gateway='ssh -i ~/.ssh/id_rsa_gateway _dsilvestre@nibbler0001.linux.locaweb.com.br'
 
 # Atalhos do gerais
-sizeWithDu() {
+size_with_du() {
   du -a $1 | sort -n -r | head -n 15
 }
-alias size=sizeWithDu
+alias size=size_with_du
+alias power='sudo powertop --auto-tune'
 alias lss='ls -ltr'
 alias Rails='bundle exec rails'
 alias Server='Rails s'
@@ -57,4 +58,4 @@ alias Ruby='bundle exec ruby'
 alias Rake='bundle exec rake'
 alias Rspec='bundle exec rspec'
 alias Cucumber='rm rerun.txt; Rake cucumber'
-alias power='sudo powertop --auto-tune'
+alias Bundle='bundle install --path vendor/bundle'
