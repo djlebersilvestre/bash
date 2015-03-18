@@ -23,48 +23,50 @@ export RUBYOPT=-Ku
 [ -f /home/dani/.travis/travis.sh ] && source /home/dani/.travis/travis.sh
 
 # Git aliases
-alias gst='git status'
-alias gcm='git commit'
-alias gad='git add'
-alias gb='git branch'
-alias gpl='git pull'
-alias gps='git push'
-alias gck='git checkout'
-alias gm='git merge'
-alias grm='git rm'
-alias gmv='git mv'
-alias gdf='git diff'
-alias gttest='git tag | grep testing | sort -V'
-alias gtstable='git tag | grep stable | sort -V'
+alias gst="git status"
+alias gcm="git commit"
+alias gad="git add"
+alias gb="git branch"
+alias gpl="git pull"
+alias gps="git push"
+alias gck="git checkout"
+alias gm="git merge"
+alias grm="git rm"
+alias gmv="git mv"
+alias gdf="git diff"
+alias gt="git tag | grep v[0-9] | sort -V"
 
 # SSH aliases
-alias gateway='ssh -i ~/.ssh/id_rsa_gateway _dsilvestre@nibbler0001.linux.locaweb.com.br'
+alias gateway="ssh -i ~/.ssh/id_rsa_gateway _dsilvestre@nibbler0001.linux.locaweb.com.br"
 
 # General aliases
 size_with_du() {
   du -a $1 | sort -n -r | head -n 15
 }
 alias size=size_with_du
-alias power='sudo powertop --auto-tune'
-alias free_mem='sudo sh -c "free -m && sync && echo 3 > /proc/sys/vm/drop_caches && free -m"'
-alias lss='ls -ltr'
+alias power="sudo powertop --auto-tune"
+alias free-mem="sudo sh -c 'free -m && sync && echo 3 > /proc/sys/vm/drop_caches && free -m'"
+alias lss="ls -ltr"
 
 # Dev aliases
-alias Rails='bundle exec spring rails'
-alias Server='Rails s'
-alias Console='Rails c'
-alias Rake='bundle exec rake'
-alias Rspec='bundle exec spring rspec'
-alias Cucumber='rm rerun.txt; Rake cucumber'
-alias Bundle='bundle install --path vendor/bundle'
+alias Rails="bundle exec spring rails"
+alias Server="Rails s"
+alias Console="Rails c"
+alias Rake="bundle exec rake"
+alias Rspec="bundle exec spring rspec"
+alias Cucumber="rm rerun.txt; Rake cucumber"
+alias Bundle="bundle install --path vendor/bundle"
 
-# Docker aliases (TODO: move to another place)
+# Docker aliases
+DKR_PG_CMD_FILE=$HOME/Programming/personal/docker-postgres/commands.sh
+[[ -s "$DKR_PG_CMD_FILE" ]] && source "$DKR_PG_CMD_FILE"
+
+DKR_REDIS_CMD_FILE=$HOME/Programming/personal/linux-scripts/dkr-redis-commands.sh
+[[ -s "$DKR_REDIS_CMD_FILE" ]] && source "$DKR_REDIS_CMD_FILE"
+
 docker_rm_containers() {
   for i in $(docker ps -a | grep -v CONTAI | awk '{print $1}'); do docker stop $i; docker rm $i; done
 }
 alias dk_rm_containers=docker_rm_containers
-alias dk_status="sudo service docker.io status"
-alias dk_start="sudo service docker.io start"
-alias dk_stop="sudo service docker.io stop"
 
 # grep 'CurrencyExchange' -rl app/ spec/ | xargs sed -i 's/CurrencyExchange/Base/g'
