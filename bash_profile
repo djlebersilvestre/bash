@@ -38,6 +38,7 @@ alias gt="git tag | grep v[0-9] | sort -V"
 
 # SSH aliases
 alias gateway="ssh -i ~/.ssh/id_rsa_gateway _dsilvestre@nibbler0001.linux.locaweb.com.br"
+alias ssh_cac="ssh root@104.167.118.103"
 
 # General aliases
 size_with_du() {
