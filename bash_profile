@@ -38,7 +38,7 @@ alias gt="git tag | grep v[0-9] | sort -V"
 
 # SSH aliases
 alias gateway="ssh -i ~/.ssh/id_rsa_gateway _dsilvestre@nibbler0001.linux.locaweb.com.br"
-alias ssh_cac="ssh root@104.167.118.103"
+alias ssh_cac="ssh root@162.219.4.166"
 
 # General aliases
 size_with_du() {
@@ -48,6 +48,7 @@ alias size=size_with_du
 alias power="sudo powertop --auto-tune"
 alias free-mem="sudo sh -c 'free -m && sync && echo 3 > /proc/sys/vm/drop_caches && free -m'"
 alias lss="ls -ltr"
+alias genpass="pwgen -s -1 16"
 
 # Dev aliases
 alias Rails="bundle exec spring rails"
@@ -59,15 +60,20 @@ alias Cucumber="rm rerun.txt; Rake cucumber"
 alias Bundle="bundle install --path vendor/bundle"
 
 # Docker aliases
-DKR_PG_CMD_FILE=$HOME/Programming/personal/docker-postgres/commands.sh
+DKR_PG_CMD_FILE=$HOME/Programming/personal/docker-postgres-cac/dkr-commands.sh
 [[ -s "$DKR_PG_CMD_FILE" ]] && source "$DKR_PG_CMD_FILE"
 
-DKR_REDIS_CMD_FILE=$HOME/Programming/personal/linux-scripts/dkr-redis-commands.sh
+DKR_REDIS_CMD_FILE=$HOME/Programming/personal/docker-redis-cac/dkr-commands.sh
 [[ -s "$DKR_REDIS_CMD_FILE" ]] && source "$DKR_REDIS_CMD_FILE"
 
-docker_rm_containers() {
-  for i in $(docker ps -a | grep -v CONTAI | awk '{print $1}'); do docker stop $i; docker rm $i; done
+dkr_rm_containers() {
+  docker rm `docker ps -a -q`
 }
-alias dk_rm_containers=docker_rm_containers
+dkr_stop_containers() {
+  docker stop `docker ps -a -q`
+}
+dkr_rm_images_unnamed() {
+  docker rmi `docker images | grep '<none>' | awk '{print $3}'`
+}
 
 # grep 'CurrencyExchange' -rl app/ spec/ | xargs sed -i 's/CurrencyExchange/Base/g'
