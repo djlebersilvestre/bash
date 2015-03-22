@@ -57,6 +57,7 @@ alias Server="Rails s"
 alias Console="Rails c"
 alias Rake="bundle exec rake"
 alias Rspec="bundle exec spring rspec"
+alias Sidekiq="bundle exec dotenv sidekiq"
 alias Cucumber="rm rerun.txt; Rake cucumber"
 alias Bundle="bundle install --path vendor/bundle"
 
