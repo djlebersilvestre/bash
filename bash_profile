@@ -62,10 +62,10 @@ alias Cucumber="rm rerun.txt; Rake cucumber"
 alias Bundle="bundle install --path vendor/bundle"
 
 # Docker aliases
-DKR_PG_CMD_FILE=$HOME/Programming/personal/docker-postgres-cac/dkr-commands.sh
+DKR_PG_CMD_FILE=$HOME/Programming/personal/docker-postgres-debian74/dkr-commands.sh
 [[ -s "$DKR_PG_CMD_FILE" ]] && source "$DKR_PG_CMD_FILE"
 
-DKR_REDIS_CMD_FILE=$HOME/Programming/personal/docker-redis-cac/dkr-commands.sh
+DKR_REDIS_CMD_FILE=$HOME/Programming/personal/docker-redis-debian74/dkr-commands.sh
 [[ -s "$DKR_REDIS_CMD_FILE" ]] && source "$DKR_REDIS_CMD_FILE"
 
 dkr_rm_containers() {
